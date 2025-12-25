@@ -1,39 +1,4 @@
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Los Prismas - Biblia Narrativa</title>
-    <style>
-        body { background-color: #0a0a0c; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; height: 100vh; }
-        header { text-align: center; padding: 30px; background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0c 100%); width: 100%; border-bottom: 1px solid #333; }
-        h1 { color: #b39ddb; letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 1.5rem; }
-        .philosophy { font-style: italic; color: #888; margin-top: 10px; font-size: 0.9rem; }
-        #chat-container { flex: 1; width: 90%; max-width: 600px; overflow-y: auto; padding: 20px; border-left: 1px solid #222; border-right: 1px solid #222; }
-        .input-area { width: 100%; max-width: 600px; padding: 20px; display: flex; gap: 10px; background: #0a0a0c; }
-        input { flex: 1; background: #121214; border: 1px solid #444; color: white; padding: 15px; border-radius: 5px; }
-        button { background: #4a148c; color: white; border: none; padding: 0 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .bot-msg { color: #b39ddb; margin-bottom: 20px; line-height: 1.5; border-left: 2px solid #4a148c; padding-left: 10px; }
-        .user-msg { color: #fff; text-align: right; margin-bottom: 20px; opacity: 0.8; font-style: italic; }
-    </style>
-</head>
-<body>
-
-<header>
-    <h1>Los Prismas</h1>
-    <p class="philosophy">"No es para pintar perfecto. Es para dejar marcas."</p>
-</header>
-
-<div id="chat-container">
-    <div class="bot-msg">El portal está abierto. Soy el Guardián de Los Prismas. ¿Buscas técnica para tu trazo o la verdad del Subsuelo?</div>
-</div>
-
-<div class="input-area">
-    <input type="text" id="userInput" placeholder="Pregunta sobre gramaje, impresión o el Domo...">
-    <button onclick="sendMessage()">ENVIAR</button>
-</div>
-
-<script>
-  const API_KEY = gen-lang-client-0004483447;
+const API_KEY = "gen-lang-client-0004483447"; 
 
     async function sendMessage() {
         const input = document.getElementById('userInput');
@@ -43,25 +8,26 @@
         const userText = input.value;
         container.innerHTML += `<div class="user-msg">${userText}</div>`;
         input.value = "";
-        container.scrollTop = container.scrollHeight;
-
-        // INSTRUCCIONES SAGRADAS (System Instructions)
-        const systemPrompt = "Eres el Guardián de Los Prismas. Tu conocimiento proviene del libro 'Los Prismas'. Leyes estrictas: 1) Papel: 120-160 g/m2. 2) Impresión: Escala 100%, doble faz, voltear borde largo. 3) Mantra: 'No es para pintar perfecto. Es para dejar marcas'. Habla con tono místico y sombrío.";
+        
+        // El Oráculo de Los Prismas
+        const promptSagrado = `Actúa como el Guardián de Los Prismas. 
+        Tus leyes: 1. Papel 120-160 g/m2. 2. Impresión escala 100%, doble faz, borde largo. 
+        3. Mantra: "No es para pintar perfecto. Es para dejar marcas". 
+        Pregunta del usuario: ${userText}`;
 
         try {
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [
-                        { role: "user", parts: [{ text: systemPrompt + " Usuario pregunta: " + userText }] }
-                    ]
+                    contents: [{ parts: [{ text: promptSagrado }] }]
                 })
             });
 
             const data = await response.json();
             
             if (data.error) {
+                console.error("Error de la API:", data.error.message);
                 throw new Error(data.error.message);
             }
 
@@ -69,10 +35,6 @@
             container.innerHTML += `<div class="bot-msg">${botText}</div>`;
             container.scrollTop = container.scrollHeight;
         } catch (e) {
-            console.error(e);
-            container.innerHTML += `<div class="bot-msg" style="color: #ff5555;">El Prisma se ha nublado (Error). Verifica que tu API Key sea válida en Google AI Studio.</div>`;
+            container.innerHTML += `<div class="bot-msg" style="color: #ff5555;">El Prisma no responde. Revisa si tu API Key en AI Studio tiene restricciones de IP o si está activa.</div>`;
         }
     }
-</script>
-</body>
-</html>
